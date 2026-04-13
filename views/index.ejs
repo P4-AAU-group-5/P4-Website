@@ -8,13 +8,63 @@
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
 
+    <!-- simulation divs -->
+    <div class="simulation" id="time">time</div>
+
+    <!-- device divs -->
+    <div class="device" id="lamp">lamp status</div>
+
     <script>
-      async function fetchState() {
-        const res = await fetch("/state");
-        const data = await res.json();
 
+      function getSimState() {
+        const simStateElements = document.querySelectorAll(".simulation")
 
+        const simState = {}
+
+        simStateElements.forEach(el => {
+          simState[el.id] = el.innerText
+        })
+
+        return simState
       }
+
+      // sends simulation state to /state router and recieves device state
+      async function fetchState(simState) {
+        const response = await fetch("/state", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ simState })
+        });
+
+        const newDeviceState = await response.json();
+
+        // might need to convert the response to an object here
+
+        return newDeviceState
+      }
+
+      // updates device divs using a deviceState object
+      function updateDevices(deviceState) {
+        // add individual device behaviour
+
+        for (const key in deviceState) {
+          const el = document.getElementById(key)
+          if (el) el.innerText = deviceState[key]
+        }
+      }
+
+      async function loop() {
+        const simState = getSimState();
+        const newDeviceState = await fetchState(simState);
+        updateDevices(newDeviceState);
+
+        setTimeout(loop, 1000);
+      }
+
+      loop();
+
     </script>
   </body>
 </html>
