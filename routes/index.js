@@ -8,17 +8,16 @@ router.get('/', function(req, res, next) {
 
 module.exports = router;
 
-router.post("/state", async (req, res) => {
+router.post("/DSL", async (req, res) => {
   const input = req.body;
 
-  const response = await fetch("https://api.example.com/analyze", {
+  const response = await fetch("http://localhost:8080/execute", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer YOUR_API_KEY"
     },
     body: JSON.stringify({
-      simState: input.simState
+      sensorState: input.sensorState
     })
   });
 

@@ -9,33 +9,35 @@
     <p>Welcome to <%= title %></p>
 
     <!-- simulation divs -->
-    <div class="simulation" id="time">time</div>
+    <div class="sensor" id="time">time</div>
+    <div class="sensor" id="light">light</div>
+    <div class="sensor" id="temperature">temperature</div>
 
     <!-- device divs -->
     <div class="device" id="lamp">lamp status</div>
 
     <script>
 
-      function getSimState() {
-        const simStateElements = document.querySelectorAll(".simulation")
+      function getSensorState() {
+        const simStateElements = document.querySelectorAll(".sensor")
 
-        const simState = {}
+        const sensorState = {}
 
         simStateElements.forEach(el => {
-          simState[el.id] = el.innerText
+          sensorState[el.id] = el.innerText
         })
 
-        return simState
+        return sensorState
       }
 
       // sends simulation state to /state router and recieves device state
-      async function fetchState(simState) {
-        const response = await fetch("/state", {
+      async function fetchState(sensorState) {
+        const response = await fetch("/DSL", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ simState })
+          body: JSON.stringify({ sensorState })
         });
 
         const newDeviceState = await response.json();
@@ -56,8 +58,8 @@
       }
 
       async function loop() {
-        const simState = getSimState();
-        const newDeviceState = await fetchState(simState);
+        const sensorState = getSensorState();
+        const newDeviceState = await fetchState(sensorState);
         updateDevices(newDeviceState);
 
         setTimeout(loop, 1000);
