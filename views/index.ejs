@@ -1,22 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <div class="house"></div>
 
-    <!-- simulation divs -->
-    <div class="sensor" id="time">time</div>
+    <!-- sensors -->
+    <p><output id="timeDisplay"></output></p>
+    <input class="sensor" type="range"  id="time" value="0" min="0" max="1440" step="15"/>
     <div class="sensor" id="light">light</div>
     <div class="sensor" id="temperature">temperature</div>
 
     <!-- device divs -->
-    <div class="device" id="lamp">lamp status</div>
+    <div class="device" id="lamp">lamp</div>
 
     <script>
+      // clock:
+      const clockDisplay = document.querySelector("#timeDisplay");
+      const slider = document.querySelector("#time");
+
+      function updateTimeDisplay() {
+        const totalMinutes = Number(slider.value);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        clockDisplay.textContent =
+        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+      }
+
+      // update when slider moves
+      slider.addEventListener("input", updateTimeDisplay);
+
+      // initial display
+      updateTimeDisplay();
+
 
       function getSensorState() {
         const simStateElements = document.querySelectorAll(".sensor")
@@ -65,7 +84,7 @@
         setTimeout(loop, 1000);
       }
 
-      loop();
+      // loop();
 
     </script>
   </body>
