@@ -1,8 +1,280 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-a {
-  color: #00B7FF;
+body {
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  color: #111111;
+  min-height: 100vh;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 1rem;
+}
+
+/* =========================
+   OUTER APP CONTAINER
+========================= */
+
+.app-shell {
+  width: min(1280px, 95vw);
+  height: min(820px, 92vh);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* =========================
+   TIMER
+========================= */
+
+.top-bar {
+  flex: 0 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+#timeDisplay {
+  font-size: clamp(2rem, 2.8vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.time-bar {
+  position: relative;
+  width: 100%;
+  height: 24px;
+
+  border: 3px solid #111111;
+  border-radius: 0;
+  overflow: hidden;
+  cursor: pointer;
+
+  background: linear-gradient(
+          to right,
+          #3b4c6b 0%,
+          #3b4c6b 25%,
+          #f6e8a8 25%,
+          #f6e8a8 75%,
+          #3b4c6b 75%,
+          #3b4c6b 100%
+  );
+}
+
+.time-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: #111111;
+  transform: translateX(-50%);
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.content {
+  flex: 1;
+  min-height: 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 0.9rem;
+  align-items: start;
+}
+
+/* =========================
+   HOUSE
+========================= */
+
+.house {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  /* Wider than tall */
+  aspect-ratio: 7 / 5;
+  max-height: 100%;
+
+  background: #f5f5f5;
+  border: 4px solid #111111;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.room-divider {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 100%;
+  background: #111111;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* =========================
+   DEVICE
+========================= */
+
+.device {
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+}
+
+#lamp {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+
+  place-self: center;
+  position: relative;
+  transform: none;
+
+  font-size: 0.95rem;
+}
+
+#lamp.off {
+  background: #d4d4d4;
+  color: #111111;
+}
+
+#lamp.on {
+  background: #111111;
+  color: white;
+}
+
+/* =========================
+   CONTROL PANEL
+========================= */
+
+.control-panel {
+  width: 310px;
+  background: #f5f5f5;
+  border: 4px solid #111111;
+
+  padding: 0.85rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+
+  align-self: start;
+}
+
+.control-panel h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.panel-card {
+  background: white;
+  border: 2px solid #111111;
+  padding: 0.85rem;
+}
+
+.panel-card h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.control-row,
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.85rem;
+}
+
+.control-group:last-child,
+.control-row:last-child {
+  margin-bottom: 0;
+}
+
+label,
+span {
+  font-size: 0.9rem;
+}
+
+#temperatureValue,
+#light {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #111111;
+}
+
+.toggle-btn {
+  background: #111111;
+  color: white;
+  border: none;
+  border-radius: 0;
+  padding: 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggle-btn:hover {
+  opacity: 0.9;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 950px) {
+  body {
+    overflow: auto;
+    align-items: flex-start;
+  }
+
+  .app-shell {
+    width: 100%;
+    height: auto;
+  }
+
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .house {
+    aspect-ratio: 7 / 5;
+  }
+
+  .control-panel {
+    width: 100%;
+  }
+}
+
+.sensor-line {
+  display: flex;
+  gap: 0.35rem;
+  align-items: baseline;
+}
+
+.sensor-line span,
+.sensor-line strong {
+  font-size: 0.95rem;
+}
+
+.sensor-line strong {
+  font-weight: 700;
 }

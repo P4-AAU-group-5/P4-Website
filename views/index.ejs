@@ -1,91 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <div class="house"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/stylesheets/style.css" />
+</head>
+<body>
+<main class="app-shell">
+  <section class="top-bar">
+    <output id="timeDisplay">00:00</output>
+    <div class="time-bar" id="timeBar">
+      <div class="time-indicator" id="timeIndicator"></div>
+    </div>
+  </section>
 
-    <!-- sensors -->
-    <p><output id="timeDisplay"></output></p>
-    <input class="sensor" type="range"  id="time" value="0" min="0" max="1440" step="15"/>
-    <div class="sensor" id="light">light</div>
-    <div class="sensor" id="temperature">temperature</div>
+  <section class="content">
+    <div class="house">
+      <div class="room-divider"></div>
+      <div class="device lamp off" id="lamp">Lamp</div>
+    </div>
 
-    <!-- device divs -->
-    <div class="device" id="lamp">lamp</div>
+    <aside class="control-panel">
+      <h2>Control Panel</h2>
 
-    <script>
-      // clock:
-      const clockDisplay = document.querySelector("#timeDisplay");
-      const slider = document.querySelector("#time");
+      <div class="panel-card">
+        <h3>Sensors</h3>
 
-      function updateTimeDisplay() {
-        const totalMinutes = Number(slider.value);
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
+        <div class="control-group">
+          <div class="sensor-line">
+            <span>Temperature:</span>
+            <strong id="temperatureValue">21°C</strong>
+          </div>
+          <input type="range" id="temperature" min="10" max="30" value="21" />
+        </div>
 
-        clockDisplay.textContent =
-        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-      }
+        <div class="control-group">
+          <div class="sensor-line">
+            <span>Light:</span>
+            <strong id="light">Night</strong>
+          </div>
+        </div>
+      </div>
 
-      // update when slider moves
-      slider.addEventListener("input", updateTimeDisplay);
+      <div class="panel-card">
+        <h3>Devices</h3>
 
-      // initial display
-      updateTimeDisplay();
+        <div class="control-row">
+          <span>Lamp</span>
+          <button class="toggle-btn" data-device="lamp">Off</button>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>
 
+<script>
+  const timeDisplay = document.querySelector("#timeDisplay");
+  const timeBar = document.querySelector("#timeBar");
+  const timeIndicator = document.querySelector("#timeIndicator");
 
-      function getSensorState() {
-        const simStateElements = document.querySelectorAll(".sensor")
+  const lamp = document.querySelector("#lamp");
+  const lampToggle = document.querySelector('[data-device="lamp"]');
 
-        const sensorState = {}
+  const temperatureSlider = document.querySelector("#temperature");
+  const temperatureValue = document.querySelector("#temperatureValue");
+  const lightDisplay = document.querySelector("#light");
 
-        simStateElements.forEach(el => {
-          sensorState[el.id] = el.innerText
-        })
+  let currentMinutes = 0;
 
-        return sensorState
-      }
+  const sensorState = {
+    time: 0,
+    temperature: 21,
+    light: "night"
+  };
 
-      // sends simulation state to /state router and recieves device state
-      async function fetchState(sensorState) {
-        const response = await fetch("/DSL", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ sensorState })
-        });
+  const deviceState = {
+    lamp: "off"
+  };
 
-        const newDeviceState = await response.json();
+  function updateTimeDisplay() {
+    const hours = Math.floor(currentMinutes / 60);
+    const minutes = currentMinutes % 60;
 
-        // might need to convert the response to an object here
+    timeDisplay.textContent =
+            `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 
-        return newDeviceState
-      }
+    const percent = currentMinutes / 1440;
+    timeIndicator.style.left = `${percent * 100}%`;
 
-      // updates device divs using a deviceState object
-      function updateDevices(deviceState) {
-        // add individual device behaviour
+    sensorState.time = currentMinutes;
+  }
 
-        for (const key in deviceState) {
-          const el = document.getElementById(key)
-          if (el) el.innerText = deviceState[key]
-        }
-      }
+  timeBar.addEventListener("click", (e) => {
+    const rect = timeBar.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = x / rect.width;
 
-      async function loop() {
-        const sensorState = getSensorState();
-        const newDeviceState = await fetchState(sensorState);
-        updateDevices(newDeviceState);
+    currentMinutes = Math.round((percent * 1440) / 15) * 15;
+    if (currentMinutes >= 1440) currentMinutes = 1435;
 
-        setTimeout(loop, 1000);
-      }
+    updateTimeDisplay();
+    updateLightSensor();
+  });
 
-      // loop();
+  function updateLightSensor() {
+    const hour = currentMinutes / 60;
+    let lightState = "night";
 
-    </script>
-  </body>
+    if (hour >= 6 && hour < 18) {
+      lightState = "day";
+    }
+
+    sensorState.light = lightState;
+    lightDisplay.textContent =
+            lightState.charAt(0).toUpperCase() + lightState.slice(1);
+  }
+
+  temperatureSlider.addEventListener("input", () => {
+    const value = Number(temperatureSlider.value);
+
+    sensorState.temperature = value;
+    temperatureValue.textContent = `${value}°C`;
+  });
+
+  function updateDevices() {
+    lamp.classList.remove("on", "off");
+    lamp.classList.add(deviceState.lamp);
+
+    lampToggle.textContent = deviceState.lamp === "on" ? "On" : "Off";
+  }
+
+  lampToggle.addEventListener("click", () => {
+    deviceState.lamp = deviceState.lamp === "off" ? "on" : "off";
+    updateDevices();
+  });
+
+  async function fetchState() {
+    const response = await fetch("/DSL", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        sensorState,
+        deviceState
+      })
+    });
+
+    const newState = await response.json();
+
+    if (newState.deviceState) {
+      Object.assign(deviceState, newState.deviceState);
+      updateDevices();
+    }
+  }
+
+  async function loop() {
+    await fetchState();
+    setTimeout(loop, 1000);
+  }
+
+  updateTimeDisplay();
+  updateLightSensor();
+  updateDevices();
+  loop();
+</script>
+</body>
 </html>
