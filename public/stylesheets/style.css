@@ -104,7 +104,6 @@ body {
   width: 100%;
   height: 100%;
 
-  /* Wider than tall */
   aspect-ratio: 7 / 5;
   max-height: 100%;
 
@@ -113,6 +112,12 @@ body {
 
   display: grid;
   grid-template-columns: 1fr 1fr;
+}
+
+.room {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .room-divider {
@@ -127,8 +132,25 @@ body {
 }
 
 /* =========================
-   DEVICE
+   LAMP
 ========================= */
+
+.lamp-wrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lamp-cord {
+  width: 3px;
+  height: 88px;
+  background: #111111;
+}
 
 .device {
   display: grid;
@@ -139,13 +161,14 @@ body {
 #lamp {
   width: 72px;
   height: 72px;
+  border: 2px solid #111111;
   border-radius: 50%;
 
-  place-self: center;
-  position: relative;
-  transform: none;
+  display: grid;
+  place-items: center;
 
   font-size: 0.95rem;
+  font-weight: 600;
 }
 
 #lamp.off {
@@ -154,8 +177,52 @@ body {
 }
 
 #lamp.on {
+  background: #ffea63;
+  color: #111111;
+}
+
+/* =========================
+   DOOR
+========================= */
+
+#door {
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  transform: translateX(-50%);
+
+  width: 197px;
+  height: 390px;
+
+  box-sizing: border-box;
+  border: 4px solid #111111;
+  background: #d9d9d9;
+
+  display: block;
+}
+
+#door.locked {
   background: #111111;
-  color: white;
+}
+
+#door.unlocked {
+  background: #d9d9d9;
+}
+
+.door-knob {
+  position: absolute;
+  top: 50%;
+  right: 24px;
+  transform: translateY(-50%);
+
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+#door.unlocked .door-knob {
+  background: #111111;
 }
 
 /* =========================
@@ -192,7 +259,10 @@ body {
   margin-bottom: 0.75rem;
 }
 
-.control-row,
+/* =========================
+   SENSOR DISPLAY
+========================= */
+
 .control-group {
   display: flex;
   flex-direction: column;
@@ -200,40 +270,71 @@ body {
   margin-bottom: 0.85rem;
 }
 
-.control-group:last-child,
+.control-group:last-child {
+  margin-bottom: 0;
+}
+
+.sensor-line {
+  display: flex;
+  gap: 0.35rem;
+  align-items: baseline;
+}
+
+.sensor-line span,
+.sensor-line strong {
+  font-size: 0.95rem;
+}
+
+.sensor-line strong {
+  font-weight: 700;
+}
+
+/* =========================
+   DEVICE CONTROLS
+========================= */
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
 .control-row:last-child {
   margin-bottom: 0;
 }
 
-label,
-span {
+.control-row span {
   font-size: 0.9rem;
-}
-
-#temperatureValue,
-#light {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-input[type="range"] {
-  width: 100%;
-  accent-color: #111111;
 }
 
 .toggle-btn {
   background: #111111;
   color: white;
+
   border: none;
   border-radius: 0;
-  padding: 0.65rem;
+
+  padding: 0.65rem 0.9rem;
   font-size: 0.95rem;
   font-weight: 600;
+
   cursor: pointer;
+  min-width: 110px;
 }
 
 .toggle-btn:hover {
   opacity: 0.9;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #111111;
 }
 
 /* =========================
@@ -262,19 +363,4 @@ input[type="range"] {
   .control-panel {
     width: 100%;
   }
-}
-
-.sensor-line {
-  display: flex;
-  gap: 0.35rem;
-  align-items: baseline;
-}
-
-.sensor-line span,
-.sensor-line strong {
-  font-size: 0.95rem;
-}
-
-.sensor-line strong {
-  font-weight: 700;
 }
