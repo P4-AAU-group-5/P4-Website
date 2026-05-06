@@ -74,7 +74,7 @@
 
         <div class="control-row">
           <span>Door</span>
-          <button class="toggle-btn" data-device="door">Locked</button>
+          <button class="toggle-btn" data-device="door">Unlocked</button>
         </div>
       </div>
     </aside>
@@ -104,9 +104,14 @@
     light: "night"
   };
 
+  /*
+    Device booleans:
+    lamp: false = off, true = on
+    door: false = unlocked, true = locked
+  */
   const deviceState = {
-    lamp: "off",
-    door: "unlocked"
+    lamp: false,
+    door: false
   };
 
   function updateTimeDisplay() {
@@ -160,24 +165,36 @@
   });
 
   function updateDevices() {
+    // Lamp: true = on, false = off
     lamp.classList.remove("on", "off");
-    lamp.classList.add(deviceState.lamp);
-    lampToggle.textContent = deviceState.lamp === "on" ? "On" : "Off";
 
+    if (deviceState.lamp) {
+      lamp.classList.add("on");
+      lampToggle.textContent = "On";
+    } else {
+      lamp.classList.add("off");
+      lampToggle.textContent = "Off";
+    }
+
+    // Door: true = locked, false = unlocked
     door.classList.remove("locked", "unlocked");
-    door.classList.add(deviceState.door);
-    doorToggle.textContent =
-            deviceState.door === "locked" ? "Locked" : "Unlocked";
+
+    if (deviceState.door) {
+      door.classList.add("locked");
+      doorToggle.textContent = "Locked";
+    } else {
+      door.classList.add("unlocked");
+      doorToggle.textContent = "Unlocked";
+    }
   }
 
   lampToggle.addEventListener("click", () => {
-    deviceState.lamp = deviceState.lamp === "off" ? "on" : "off";
+    deviceState.lamp = !deviceState.lamp;
     updateDevices();
   });
 
   doorToggle.addEventListener("click", () => {
-    deviceState.door =
-            deviceState.door === "locked" ? "unlocked" : "locked";
+    deviceState.door = !deviceState.door;
     updateDevices();
   });
 
@@ -209,6 +226,8 @@
   updateTimeDisplay();
   updateLightSensor();
   updateDevices();
+
+  // Uncomment this when you want the frontend to sync with /DSL continuously.
   // loop();
 </script>
 </body>
