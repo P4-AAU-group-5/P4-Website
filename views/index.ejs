@@ -1,234 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/stylesheets/style.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
 
-<body>
-<main class="app-shell">
-  <section class="top-bar">
-    <output id="timeDisplay">00:00</output>
+  <body>
+    <main class="app-shell">
+      <section class="top-bar">
+        <output id="timeDisplay">00:00</output>
 
-    <div class="time-bar" id="timeBar">
-      <div class="time-indicator" id="timeIndicator"></div>
-    </div>
-  </section>
-
-  <section class="content">
-    <div class="house">
-      <div class="room left-room">
-        <div class="lamp-wrapper">
-          <div class="lamp-cord"></div>
-          <div class="device lamp off" id="lamp"></div>
+        <div class="time-bar" id="timeBar">
+          <div class="time-indicator" id="timeIndicator"></div>
         </div>
+      </section>
 
-        <div class="device door unlocked" id="door">
-          <div class="door-knob"></div>
-        </div>
-      </div>
+      <section class="content">
+        <div class="house">
+          <div class="room left-room">
+            <div class="lamp-wrapper left-lamp-wrapper">
+              <div class="lamp-cord"></div>
+              <div class="device lamp off" id="lamp_left"></div>
+            </div>
 
-      <div class="room right-room"></div>
-
-      <div class="room-divider"></div>
-    </div>
-
-    <aside class="control-panel">
-      <h2>Control Panel</h2>
-
-      <div class="panel-card">
-        <h3>Sensors</h3>
-
-        <div class="control-group">
-          <div class="sensor-line">
-            <span>Temperature:</span>
-            <strong id="temperatureValue">21°C</strong>
+            <div class="device door unlocked" id="door">
+              <div class="door-knob"></div>
+            </div>
           </div>
 
-          <input
-                  type="range"
-                  id="temperature"
-                  min="10"
-                  max="30"
-                  value="21"
-          />
-        </div>
+          <div class="room right-room">
+            <div class="lamp-wrapper right-lamp-wrapper">
+              <div class="lamp-cord"></div>
+              <div class="device lamp off" id="lamp_right"></div>
+            </div>
 
-        <div class="control-group">
-          <div class="sensor-line">
-            <span>Light:</span>
-            <strong id="light">Night</strong>
+            <div class="device window closed" id="window">
+              <div class="window-pane vertical"></div>
+              <div class="window-pane horizontal"></div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div class="panel-card">
-        <h3>Devices</h3>
-
-        <div class="control-row">
-          <span>Lamp</span>
-          <button class="toggle-btn" data-device="lamp">Off</button>
+          <div class="room-divider"></div>
         </div>
 
-        <div class="control-row">
-          <span>Door</span>
-          <button class="toggle-btn" data-device="door">Unlocked</button>
-        </div>
-      </div>
-    </aside>
-  </section>
-</main>
+        <aside class="control-panel">
+          <h2>Control Panel</h2>
 
-<script>
-  const timeDisplay = document.querySelector("#timeDisplay");
-  const timeBar = document.querySelector("#timeBar");
-  const timeIndicator = document.querySelector("#timeIndicator");
+          <div class="panel-card">
+            <h3>Sensors</h3>
 
-  const lamp = document.querySelector("#lamp");
-  const door = document.querySelector("#door");
+            <div class="control-group">
+              <div class="sensor-line">
+                <span>Temperature:</span>
+                <strong id="temperatureValue">21°C</strong>
+              </div>
 
-  const lampToggle = document.querySelector('[data-device="lamp"]');
-  const doorToggle = document.querySelector('[data-device="door"]');
+              <input
+                type="range"
+                id="temperature"
+                min="10"
+                max="30"
+                value="21"
+              />
+            </div>
 
-  const temperatureSlider = document.querySelector("#temperature");
-  const temperatureValue = document.querySelector("#temperatureValue");
-  const lightDisplay = document.querySelector("#light");
+            <div class="control-group">
+              <div class="sensor-line">
+                <span>Light:</span>
+                <strong id="light">Night</strong>
+              </div>
+            </div>
+          </div>
 
-  let currentMinutes = 0;
+          <div class="panel-card">
+            <h3>Devices</h3>
 
-  const sensorState = {
-    time: 0,
-    temperature: 21,
-    light: "night"
-  };
+            <div class="control-row">
+              <span>lamp_left</span>
+              <button class="toggle-btn" data-device="lamp_left">Off</button>
+            </div>
 
-  /*
-    Device booleans:
-    lamp: false = off, true = on
-    door: false = unlocked, true = locked
-  */
-  const deviceState = {
-    lamp: false,
-    door: false
-  };
+            <div class="control-row">
+              <span>lamp_right</span>
+              <button class="toggle-btn" data-device="lamp_right">Off</button>
+            </div>
 
-  function updateTimeDisplay() {
-    const hours = Math.floor(currentMinutes / 60);
-    const minutes = currentMinutes % 60;
+            <div class="control-row">
+              <span>door</span>
+              <button class="toggle-btn" data-device="door">Unlocked</button>
+            </div>
 
-    timeDisplay.textContent =
-            `${hours.toString().padStart(2, "0")}:${minutes
-                    .toString()
-                    .padStart(2, "0")}`;
+            <div class="control-row">
+             <span>window</span>
+             <button class="toggle-btn" data-device="window">Closed</button>
+            </div>
 
-    const percent = currentMinutes / 1440;
-    timeIndicator.style.left = `${percent * 100}%`;
+          </div>
+        </aside>
+      </section>
+    </main>
 
-    sensorState.time = currentMinutes;
-  }
+    <script>
+      const timeDisplay = document.querySelector("#timeDisplay");
+      const timeBar = document.querySelector("#timeBar");
+      const timeIndicator = document.querySelector("#timeIndicator");
 
-  function updateLightSensor() {
-    const hour = currentMinutes / 60;
-    let lightState = "night";
+      const lampLeft = document.querySelector("#lamp_left");
+      const lampRight = document.querySelector("#lamp_right");
+      const door = document.querySelector("#door");
+      const windowDevice = document.querySelector("#window");
 
-    if (hour >= 6 && hour < 18) {
-      lightState = "day";
-    }
+      const lampLeftToggle = document.querySelector('[data-device="lamp_left"]');
+      const lampRightToggle = document.querySelector('[data-device="lamp_right"]');
+      const doorToggle = document.querySelector('[data-device="door"]');
+      const windowToggle = document.querySelector('[data-device="window"]');
 
-    sensorState.light = lightState;
-    lightDisplay.textContent =
-            lightState.charAt(0).toUpperCase() + lightState.slice(1);
-  }
+      const temperatureSlider = document.querySelector("#temperature");
+      const temperatureValue = document.querySelector("#temperatureValue");
+      const lightDisplay = document.querySelector("#light");
 
-  timeBar.addEventListener("click", (e) => {
-    const rect = timeBar.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const percent = x / rect.width;
+      let currentMinutes = 0;
 
-    currentMinutes = Math.round((percent * 1440) / 15) * 15;
+      const sensorState = {
+        time: 0,
+        temperature: 21,
+        light: "night"
+      };
 
-    if (currentMinutes >= 1440) {
-      currentMinutes = 1435;
-    }
+      /*
+        Device booleans:
+        lamp_left: false = off, true = on
+        lamp_right: false = off, true = on
+        door: false = unlocked, true = locked
+      */
+      const deviceState = {
+        lamp_left: false,
+        lamp_right: false,
+        door: false,
+        window: false
+      };
 
-    updateTimeDisplay();
-    updateLightSensor();
-  });
+      function updateTimeDisplay() {
+        const hours = Math.floor(currentMinutes / 60);
+        const minutes = currentMinutes % 60;
 
-  temperatureSlider.addEventListener("input", () => {
-    const value = Number(temperatureSlider.value);
+        timeDisplay.textContent =
+          `${hours.toString().padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")}`;
 
-    sensorState.temperature = value;
-    temperatureValue.textContent = `${value}°C`;
-  });
+        const percent = currentMinutes / 1440;
+        timeIndicator.style.left = `${percent * 100}%`;
 
-  function updateDevices() {
-    // Lamp: true = on, false = off
-    lamp.classList.remove("on", "off");
+        sensorState.time = currentMinutes;
+      }
 
-    if (deviceState.lamp) {
-      lamp.classList.add("on");
-      lampToggle.textContent = "On";
-    } else {
-      lamp.classList.add("off");
-      lampToggle.textContent = "Off";
-    }
+      function updateLightSensor() {
+        const hour = currentMinutes / 60;
+        let lightState = "night";
 
-    // Door: true = locked, false = unlocked
-    door.classList.remove("locked", "unlocked");
+        if (hour >= 6 && hour < 18) {
+          lightState = "day";
+        }
 
-    if (deviceState.door) {
-      door.classList.add("locked");
-      doorToggle.textContent = "Locked";
-    } else {
-      door.classList.add("unlocked");
-      doorToggle.textContent = "Unlocked";
-    }
-  }
+        sensorState.light = lightState;
+        lightDisplay.textContent =
+          lightState.charAt(0).toUpperCase() + lightState.slice(1);
+      }
 
-  lampToggle.addEventListener("click", () => {
-    deviceState.lamp = !deviceState.lamp;
-    updateDevices();
-  });
+      timeBar.addEventListener("click", (e) => {
+        const rect = timeBar.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const percent = x / rect.width;
 
-  doorToggle.addEventListener("click", () => {
-    deviceState.door = !deviceState.door;
-    updateDevices();
-  });
+        currentMinutes = Math.round((percent * 1440) / 15) * 15;
 
-  async function fetchState() {
-    const response = await fetch("/DSL", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        sensorState,
-        deviceState
-      })
-    });
+        if (currentMinutes >= 1440) {
+          currentMinutes = 1435;
+        }
 
-    const newState = await response.json();
+        updateTimeDisplay();
+        updateLightSensor();
+      });
 
-    if (newState.deviceState) {
-      Object.assign(deviceState, newState.deviceState);
+      temperatureSlider.addEventListener("input", () => {
+        const value = Number(temperatureSlider.value);
+
+        sensorState.temperature = value;
+        temperatureValue.textContent = `${value}°C`;
+      });
+
+      function updateLamp(element, button, isOn) {
+        element.classList.remove("on", "off");
+
+        if (isOn) {
+          element.classList.add("on");
+          button.textContent = "On";
+        } else {
+          element.classList.add("off");
+          button.textContent = "Off";
+        }
+      }
+
+      function updateDevices() {
+        updateLamp(lampLeft, lampLeftToggle, deviceState.lamp_left);
+        updateLamp(lampRight, lampRightToggle, deviceState.lamp_right);
+
+        // Window: true = open, false = closed
+        windowDevice.classList.remove("open", "closed");
+        if (deviceState.window) {
+          windowDevice.classList.add("open");
+          windowToggle.textContent = "Open";
+        } else {
+          windowDevice.classList.add("closed");
+          windowToggle.textContent = "Closed";
+        }
+
+        // Door: true = locked, false = unlocked
+        door.classList.remove("locked", "unlocked");
+        if (deviceState.door) {
+          door.classList.add("locked");
+          doorToggle.textContent = "Locked";
+        } else {
+          door.classList.add("unlocked");
+          doorToggle.textContent = "Unlocked";
+        }
+      }
+
+      lampLeftToggle.addEventListener("click", () => {
+        deviceState.lamp_left = !deviceState.lamp_left;
+        updateDevices();
+      });
+
+      lampRightToggle.addEventListener("click", () => {
+        deviceState.lamp_right = !deviceState.lamp_right;
+        updateDevices();
+      });
+
+      doorToggle.addEventListener("click", () => {
+        deviceState.door = !deviceState.door;
+        updateDevices();
+      });
+
+      windowToggle.addEventListener("click", () => {
+        deviceState.window = !deviceState.window;
+        updateDevices();
+      });
+
+      async function fetchState() {
+        const response = await fetch("/DSL", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            sensorState,
+            deviceState
+          })
+        });
+
+        const newState = await response.json();
+
+        if (newState.deviceState) {
+          Object.assign(deviceState, newState.deviceState);
+          updateDevices();
+        }
+      }
+
+      async function loop() {
+        await fetchState();
+        setTimeout(loop, 1000);
+      }
+
+      updateTimeDisplay();
+      updateLightSensor();
       updateDevices();
-    }
-  }
 
-  async function loop() {
-    await fetchState();
-    setTimeout(loop, 1000);
-  }
-
-  updateTimeDisplay();
-  updateLightSensor();
-  updateDevices();
-
-  // Uncomment this when you want the frontend to sync with /DSL continuously.
-  // loop();
-</script>
-</body>
+      // Uncomment this when you want the frontend to sync with /DSL continuously.
+      // loop();
+    </script>
+  </body>
 </html>

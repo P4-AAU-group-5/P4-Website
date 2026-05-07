@@ -158,25 +158,23 @@ body {
   font-weight: 600;
 }
 
-#lamp {
+.lamp {
   width: 72px;
   height: 72px;
   border: 2px solid #111111;
   border-radius: 50%;
-
   display: grid;
   place-items: center;
-
   font-size: 0.95rem;
   font-weight: 600;
 }
 
-#lamp.off {
+.lamp.off {
   background: #d4d4d4;
   color: #111111;
 }
 
-#lamp.on {
+.lamp.on {
   background: #ffea63;
   color: #111111;
 }
@@ -223,6 +221,52 @@ body {
 
 #door.unlocked .door-knob {
   background: #111111;
+}
+
+/* =========================
+   WINDOW
+========================= */
+
+#window {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 150px;
+  height: 145px;
+
+  border: 4px solid #111111;
+  background: #d9d9d9;
+}
+
+#window.closed {
+  background: #d9d9d9;
+}
+
+#window.open {
+  background: #9bccfa;
+}
+
+.window-pane {
+  position: absolute;
+  background: #111111;
+}
+
+.window-pane.vertical {
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+.window-pane.horizontal {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  transform: translateY(-50%);
 }
 
 /* =========================
