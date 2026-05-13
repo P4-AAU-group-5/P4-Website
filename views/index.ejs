@@ -123,18 +123,16 @@
 
       let currentMinutes = 0;
 
+      let time = {
+        hour: 0,
+        minute: 0
+      }
+
       const sensorState = {
-        time: 0,
         temperature: 21,
         light: "night"
       };
 
-      /*
-        Device booleans:
-        lamp_left: false = off, true = on
-        lamp_right: false = off, true = on
-        door: false = unlocked, true = locked
-      */
       const deviceState = {
         lamp_left: false,
         lamp_right: false,
@@ -154,7 +152,8 @@
         const percent = currentMinutes / 1440;
         timeIndicator.style.left = `${percent * 100}%`;
 
-        sensorState.time = currentMinutes;
+        timeState.hour = hours
+        timeState.minute = minutes
       }
 
       function updateLightSensor() {
@@ -257,7 +256,8 @@
           },
           body: JSON.stringify({
             sensorState,
-            deviceState
+            deviceState,
+            time
           })
         });
 
@@ -278,8 +278,7 @@
       updateLightSensor();
       updateDevices();
 
-      // Uncomment this when you want the frontend to sync with /DSL continuously.
-      // loop();
+      loop();
     </script>
   </body>
 </html>
