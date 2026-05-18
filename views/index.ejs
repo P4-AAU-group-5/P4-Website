@@ -123,14 +123,14 @@
 
       let currentMinutes = 0;
 
-      let time = {
+      let timeState = {
         hour: 0,
         minute: 0
       }
 
       const sensorState = {
         temperature: 21,
-        light: "night"
+        light: false
       };
 
       const deviceState = {
@@ -158,15 +158,10 @@
 
       function updateLightSensor() {
         const hour = currentMinutes / 60;
-        let lightState = "night";
+        const isDay = hour >= 6 && hour < 18;
 
-        if (hour >= 6 && hour < 18) {
-          lightState = "day";
-        }
-
-        sensorState.light = lightState;
-        lightDisplay.textContent =
-          lightState.charAt(0).toUpperCase() + lightState.slice(1);
+        sensorState.light = isDay;
+        lightDisplay.textContent = isDay ? "Day" : "Night";
       }
 
       timeBar.addEventListener("click", (e) => {
@@ -257,14 +252,17 @@
           body: JSON.stringify({
             sensorState,
             deviceState,
-            time
+            timeState
           })
         });
 
         const newState = await response.json();
 
-        if (newState.deviceState) {
-          Object.assign(deviceState, newState.deviceState);
+        if (newState.devices) {
+          newState.devices.forEach(device => {
+            deviceState[device.name] = device.state;
+          });
+
           updateDevices();
         }
       }
