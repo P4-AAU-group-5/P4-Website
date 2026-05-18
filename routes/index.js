@@ -6,8 +6,6 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-module.exports = router;
-
 router.post("/DSL", async (req, res) => {
   const input = req.body;
 
@@ -27,3 +25,5 @@ router.post("/DSL", async (req, res) => {
 
   res.json(data);
 });
+
+module.exports = router;
