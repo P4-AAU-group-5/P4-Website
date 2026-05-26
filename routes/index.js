@@ -18,7 +18,8 @@ router.post("/DSL", async (req, res) => {
     },
     body: JSON.stringify({
       sensorState: input.sensorState,
-      deviceState: input.deviceState
+      deviceState: input.deviceState,
+      time: input.timeState
     })
   });
 
